@@ -51,7 +51,8 @@
                 url: BASE_API_URL + "feed.json",
                 data: $.extend({},
                 BASE_DATA, {
-                    type: "interesting"
+                    type: "interesting",
+                    include_geo: 1
                 }),
                 success: _genericSuccess(callback)
             },
