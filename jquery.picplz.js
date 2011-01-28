@@ -33,9 +33,9 @@
 
     Picplz = {
 
-        init: function(oauth_consumer_key, global_error) {
+        init: function(oauth_token, global_error) {
 
-            this.oauth_consumer_key = (oauth_consumer_key) ? oauth_consumer_key: NULL;
+            this.oauth_token = (oauth_token) ? oauth_token: NULL;
             if (typeof(global_error) !== "undefined") {
                 BASE_AJAX.error = global_error;
             }
@@ -45,37 +45,16 @@
 
         },
 
-
-        interesting: function(callback, last_pic_id) {
-            var local_ajax = {
-                url: BASE_API_URL + "feed.json",
-                data: $.extend({},
-                BASE_DATA, {
-                    type: "interesting",
-                    include_geo: 1
-                }),
-                success: _genericSuccess(callback)
-            },
-            ajax = $.extend({},
-            BASE_AJAX, local_ajax);
-            if (last_pic_id) {
-                ajax.data.last_pic_id = last_pic_id;
-            }
-            $.ajax(ajax);
+        setPicFormats: function(pic_format_list){
+            
+            pic_format_list = ($.isArray(pic_format_list)) ? pic_format_list.join(",") : pic_format_list;
+             
+            BASE_DATA = $.extend({}, BASE_DATA, {
+                'pic_formats': pic_format_list
+            });
         },
+        
 
-        _fetch: function(callback, object_type, data) {
-            var local_ajax = {
-                url: BASE_API_URL + object_type + ".json",
-                data: $.extend({},
-                BASE_DATA, data),
-                success: _genericSuccess(callback)
-            },
-            ajax = $.extend({},
-            BASE_AJAX, local_ajax);
-
-            $.ajax(ajax);
-        },
 
         _preFetch: function(callback, many, object_type, type, value, include_detail, include_pics, last_pic_id) {
             var data = {};
@@ -101,6 +80,57 @@
             this._fetch(callback, object_type, data);
             return TRUE;
         },
+        
+        
+        interesting: function(callback, last_pic_id) {
+            var local_ajax = {
+                url: BASE_API_URL + "feed.json",
+                data: $.extend({},
+                BASE_DATA, {
+                    type: "interesting",
+                    include_geo: 1
+                }),
+                success: _genericSuccess(callback)
+            },
+            ajax = $.extend({},
+            BASE_AJAX, local_ajax);
+            if (last_pic_id) {
+                ajax.data.last_pic_id = last_pic_id;
+            }
+            $.ajax(ajax);
+        },
+        
+        network: function(callback, last_pic_id) {
+            var local_ajax = {
+                url: BASE_API_URL + "feed.json",
+                data: $.extend({},
+                BASE_DATA, {
+                    type: "network",
+                    include_geo: 1,
+                    oauth_token: this.oauth_token
+                }),
+                success: _genericSuccess(callback)
+            },
+            ajax = $.extend({},
+            BASE_AJAX, local_ajax);
+            if (last_pic_id) {
+                ajax.data.last_pic_id = last_pic_id;
+            }
+            $.ajax(ajax);
+        },
+
+        _fetch: function(callback, object_type, data) {
+            var local_ajax = {
+                url: BASE_API_URL + object_type + ".json",
+                data: $.extend({},
+                BASE_DATA, data),
+                success: _genericSuccess(callback)
+            },
+            ajax = $.extend({},
+            BASE_AJAX, local_ajax);
+
+            $.ajax(ajax);
+        },
 
         userById: function(callback, id, include_detail, include_pics, last_pic_id) {
             this._preFetch(callback, false, "user", "id", id, include_detail, include_pics, last_pic_id);
@@ -108,7 +138,7 @@
         },
 
         userByUsername: function(callback, username, include_detail, include_pics, last_pic_id) {
-            this._preFetch(callback, false, "user", "username", id, include_detail, include_pics, last_pic_id);
+            this._preFetch(callback, false, "user", "username", username, include_detail, include_pics, last_pic_id);
             return TRUE;
         },
 
