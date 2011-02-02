@@ -3,6 +3,7 @@
     FALSE = false,
     NULL = null,
     BASE_API_URL = "http://picplz.com/api/v2/",
+    SECURE_BASE_API_URL = "https://picplz.com/api/v2/",
     BASE_AJAX = {
         dataType: "jsonp",
         url: BASE_API_URL,
@@ -102,7 +103,7 @@
         
         network: function(callback, last_pic_id) {
             var local_ajax = {
-                url: BASE_API_URL + "feed.json",
+                url: SECURE_BASE_API_URL + "feed.json",
                 data: $.extend({},
                 BASE_DATA, {
                     type: "network",
